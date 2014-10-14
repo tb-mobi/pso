@@ -4,7 +4,6 @@ include("../config.php");
 include(TYM_PATH."TymLib.php");
 $controller=new TymParser;
 $controller->service();
-$log=ob_get_clean();
-Formatter::log($log);
+file_put_contents("../out.log",ob_get_clean()."\n",FILE_APPEND);
 echo $controller;
 ?>
