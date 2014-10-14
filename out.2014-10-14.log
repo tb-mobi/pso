@@ -1,0 +1,52 @@
+LOG: 15:1012:07Array
+(
+    [http] => Array
+        (
+            [header] => Content-type: application/json
+            [method] => POST
+            [proxy] => tcp://10.0.1.46:8080
+            [request_fulluri] => 1
+            [content] => []
+        )
+
+)
+
+LOG: 15:1010:49 Array
+(
+    [http] => Array
+        (
+            [header] => Content-type: application/json
+            [method] => POST
+            [proxy] => tcp://10.0.1.46:8080
+            [request_fulluri] => 1
+            [content] => []
+        )
+
+)
+
+LOG: 1413285398 Array
+(
+    [http] => Array
+        (
+            [header] => Content-type: application/json
+            [method] => POST
+            [proxy] => tcp://10.0.1.46:8080
+            [request_fulluri] => 1
+            [content] => []
+        )
+
+)
+
+LOG: 15:17:35 Array
+(
+    [http] => Array
+        (
+            [header] => Content-type: application/json
+            [method] => POST
+            [proxy] => tcp://10.0.1.46:8080
+            [request_fulluri] => 1
+            [content] => []
+        )
+
+)
+

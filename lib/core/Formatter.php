@@ -27,8 +27,7 @@ class Formatter{
 		return json_encode(Formatter::object2Array($val));
 	}
 	public static function log($str){
-		print_r($_SERVER);
-		file_put_contents("../out.".date("Y-m-d").".log","LOG: ".date("H:mi:s").$str."\n",FILE_APPEND);
+		file_put_contents("../out.".date("Y-m-d").".log","LOG: ".date("H:i:s")." ".$str."\n",FILE_APPEND);
 	}
 	public static function object2Array($d){
 		if (is_object($d)) {
