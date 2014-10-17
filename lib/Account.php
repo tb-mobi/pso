@@ -6,6 +6,7 @@ class Account extends Tym{
 	protected $number;
 	protected $product;
 	protected $state;
+	protected $currency;
 	protected $operations=array();
 	public function __construct($p,$products=null){
 		$pso=$this->object2Array($p);
@@ -13,6 +14,7 @@ class Account extends Tym{
 		$this->id=$pso["ID"];
 		$this->number=$pso["account_number"];
 		$this->state=$pso["state"];
+		$this->currency=new Currency(substr($pso["account_number"],5,3));		
 		$this->balance=new SimpleBalance($pso["SaldoA"]);
 		$this->product=(!is_null($products))?$products->getProductById($pso["product_ID"]):$pso["product_ID"];
 		$this->cardList=(!is_null($pso["CardArray"]))?new CardList($pso["CardArray"]):array();
