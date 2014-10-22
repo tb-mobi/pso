@@ -4,28 +4,23 @@ class TymParser{
 	protected $_object=null;
 	protected $_string="";
 	public function parse($str){
+		$this->_string=$str;
 		$obj=json_decode($str);
-		try{
-			foreach(get_object_vars($obj) as $r=>$d){
-				if(isset($this->knownPSOResponse[$r])){
-					$class=$this->knownPSOResponse[$r]["class"];
-					if("notImplemented"!==$class){
-						if(isset($this->knownPSOResponse[$r]["property"])&&isset($this->knownPSOResponse[$r]["property"]["params"])){
-							$property=$this->knownPSOResponse[$r]["property"]["params"][0];
-							$this->_object=new $class($obj,(isset($this->$property)&&!is_null($this->$property))?$this->$property:null);
-						}
-						else $this->_object=new $class($obj);
-						if(isset($this->knownPSOResponse[$r]["property"])&&isset($this->knownPSOResponse[$r]["property"]["save2local"])){
-							$property=$this->knownPSOResponse[$r]["property"]["save2local"];
-							$this->$property=$this->_object;
-						}
+		foreach(get_object_vars($obj) as $r=>$d){
+			if(isset($this->knownPSOResponse[$r])){
+				$class=$this->knownPSOResponse[$r]["class"];
+				if("notImplemented"!==$class){
+					if(isset($this->knownPSOResponse[$r]["property"])&&isset($this->knownPSOResponse[$r]["property"]["params"])){
+						$property=$this->knownPSOResponse[$r]["property"]["params"][0];
+						$this->_object=new $class($obj,(isset($this->$property)&&!is_null($this->$property))?$this->$property:null);
+					}
+					else $this->_object=new $class($obj);
+					if(isset($this->knownPSOResponse[$r]["property"])&&isset($this->knownPSOResponse[$r]["property"]["save2local"])){
+						$property=$this->knownPSOResponse[$r]["property"]["save2local"];
+						$this->$property=$this->_object;
 					}
 				}
 			}
-		}
-		catch(Exception $e){
-			$this->_string=$str;
-			$this->_object=null;
 		}
 	}
 	public function __toString(){
@@ -53,9 +48,6 @@ class TymParser{
 					$data[$psoParamName]=$value;
 				}
 			}
-			if(isset($request["pso"]["default"])){foreach($request["pso"]["default"] as $p=>$v){
-				$data[$p]=$v;
-			}}
 			$CONTEXT_OPTIONS['http']['content']=json_encode($data);
 			$url=PSO_SERIVCE_URL.$request["pso"]["request"]."/";
 			$context=stream_context_create($CONTEXT_OPTIONS);
@@ -129,10 +121,6 @@ class TymParser{
 			"pso"=>array(
 				"request"=>"PSOCabinGetOpersPeriod2"
 				,"params"=>array("sessionid"=>"temp_id","account"=>"acc_id")
-				,"default"=>array(
-					"date_to"=>"21.10.2014 00:00:00"//date_format(getdate(),"d.m.Y 00:00:00")
-					,"date_from"=>"11.10.2014 00:00:00"//date_format(date_add(getdate(), -date_interval_create_from_date_string('10 days')),"d.m.Y 00:00:00")
-				)
 			)
 		)
 		,"PSOGiveMeAPhoneResult"=>array("class"=>"Phone")

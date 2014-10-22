@@ -7,7 +7,6 @@ class Card extends Tym{
 	protected $pan;
 	protected $state;
 	protected $active;
-	protected $wps;
 	public function __construct($p){
 		$pso=$this->object2Array($p);
 		$this->id=isset($pso["ID"])?$pso["ID"]:(isset($pso["id"])?$pso["id"]:null);
@@ -16,20 +15,9 @@ class Card extends Tym{
 		$this->active=isset($pso["is_active"])?$pso["is_active"]:null;
 		$this->pan=isset($pso["PAN"])?$pso["PAN"]:(isset($pso["PAN_TAIL"])?$pso["PAN_TAIL"]:null);
 		$this->embossedName=isset($pso["Embossed_Name"])?$pso["Embossed_Name"]:null;
-		$this->wps=substr($this->pan,0,1);
 		if(isset($pso["Expired_Mounth"]))$this->expiredDate=Formatter::FormatPSOExpireDate($pso["Expired_Mounth"],$pso["Expired_Year"]);
 		else if(isset($pso["exp"]))$this->expiredDate=Formatter::FormatExpireDate($pso["exp"]);
 		
-	}
-	public function get(){
-		$ret=parent::get();
-		if($this->wps=="5"){
-			$ret["wps"]=array("mc"=>true);
-		}
-		else if($this->wps=="4"){
-			$ret["wps"]=array("visa"=>true);
-		}
-		return $ret;
 	}
 	/*
 	{"PSOGetPlatfonAccountsInfoResult":[{"CardArray":[],"ID":19196,"SaldoA":0.02,"account_number":"40817810000010225727","product_ID":41,"state":"OPEN"},{"CardArray":[],"ID":19197,"SaldoA":0.7,"account_number":"40817840700011125727","product_ID":41,"state":"OPEN"},
