@@ -60,12 +60,13 @@ class TymParser{
 			$url=PSO_SERIVCE_URL.$request["pso"]["request"]."/";
 			$context=stream_context_create($CONTEXT_OPTIONS);
 			try{
-				print_r($CONTEXT_OPTIONS);
+				Formatter::log("PSO Request [".$url."]: ".$CONTEXT_OPTIONS['http']['content']);
 				$_result=file_get_contents($url,false,$context);
 			}
 			catch(Exception $e){
 				$_result='{"exception":{"code":1,"message":"Error"}}';
 			}
+			Formatter::log("PSO response: ".$_result);
 			$this->parse($_result);
 
 		}
@@ -130,8 +131,18 @@ class TymParser{
 				"request"=>"PSOCabinGetOpersPeriod2"
 				,"params"=>array("sessionid"=>"temp_id","account"=>"acc_id")
 				,"default"=>array(
-					"date_to"=>"21.10.2014 00:00:00"//date_format(getdate(),"d.m.Y 00:00:00")
-					,"date_from"=>"11.10.2014 00:00:00"//date_format(date_add(getdate(), -date_interval_create_from_date_string('10 days')),"d.m.Y 00:00:00")
+					"date_beg"=>"01.01.2014 00:00:00"//date_format(getdate(),"d.m.Y 00:00:00")
+					,"date_end"=>"22.10.2014 00:00:00"//date_format(date_add(getdate(), -date_interval_create_from_date_string('10 days')),"d.m.Y 00:00:00")
+				)
+			)
+		)
+		,"test"=>array(
+			"pso"=>array(
+				"request"=>"PSOCabinGetOpersPeriod2"
+				,"params"=>array("sessionid"=>"temp_id","account"=>"acc_id","panid"=>"card_id")
+				,"default"=>array(
+					"date_beg"=>"11.10.2014"//date_format(getdate(),"d.m.Y 00:00:00")
+					,"date_end"=>"22.10.2014"//date_format(date_add(getdate(), -date_interval_create_from_date_string('10 days')),"d.m.Y 00:00:00")
 				)
 			)
 		)

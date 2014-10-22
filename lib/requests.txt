@@ -1,0 +1,28 @@
+Банки по БИК                                   GetBankInfoFromBIK                       {""BIK"":""""}
+Авторизация пользователя                       PSOCabinAuth                             {""login"":"""", ""pass"":""""}
+Идентификация клиента                          PSOCabinIdent                            {""temp_id"":"""", ""PAN_tail"":""""}
+Операции за период дат (новое)                 PSOCabinGetOpersPeriod2                  {""temp_id"":"""",""acc_id"":0, ""date_beg"":"""", ""date_end"":""""}
+Операций клиента с паджинацией                 PSOCabinGetOpersPages                    {""temp_id"":"""",""acc_id"":0, ""onset"":0, ""offset"":0, ""letters"":"""",""date_beg"":""01.01.2001"",""date_end"":""31.12.4099"",""CaseSens"":true}
+Получаем продукты клиента                      PSOCabinGetCardsList                     {""temp_id"":""""}
+Выписка последних операций                     PSOCabinGetLastOpers                     {""temp_id"":"""",""card_id"":0, ""count"":0}
+Выписка за период                              PSOCabinGetOpersPeriod                   {""temp_id"":"""",""card_id"":0, ""date_beg"":"""", ""date_end"":""""}
+Компрометация пароля                           PSOSetPasswordCompromited                {""temp_id"":"""",""Old_Pass"":"""",""New_Pass"":""""}
+Компрометация LOGIN                            PSOSetLogin                              {""temp_id"":"""",""Password"":"""",""New_Login"":""""}
+Активация аккаунта клиента                     PSOSetClientStatusToIdent                {""temp_id"":""""}
+Получить услуги по счету                       PSOGetAccountServices                    {""temp_id"":"""", ""acc_id"":0} 
+Отключить/Подключить услугу                    PSOSetAccountService                     {""temp_id"":"""", ""acc_id"":0, ""srv_code"":"""", ""new_status"":true, ""dateEnd"":""""}
+Получаем продукты  клиента                     PSOGetClientProducts                     {""temp_id"":""""}
+КНВК. Введенные пользователем реквизиты        PSOShowCreditRqHistory                   {""temp_id"":"""", ""ProductCode"":"""", ""ProductID"":0, ""visible_only"":true}
+Получаем кредитные продукты клиента            PSOGetClientCredProducts                 {""temp_id"":""""}
+Получение информации об отложенных платежах    PSOGetPromisedPayData                    {""temp_id"", ""account_id"":0}
+ЗАЯВКИ. Создание заявки от клиента(общ)        PSONewRequestion                         {""RequestionBody"":{}, ""RequestionCode"":""""}
+ЗАЯВКИ. Создание заявки (смена реквизитов)     PSONewRequestion                         {""RequestionBody"":{""NewRequisits"":{""temp_id"":"""",""is_card"":true,""Product_Id"":89,""Card_Data"":{""PAN"":"""",""Embossed_Name"":"""",""Expired_Year"":0,""Expired_Mounth"":0,""Name"":""},""Account_data"":{""BIK"":"""",""Correspondent_Account"":"""",""Account"":"""",""Payee"":"""",""Name"":""}}}, ""RequestionCode"":""NEW_PAY_REQISITES""}
+ЗАЯВКИ. Создание транша                        PSONewRequestion                         {""RequestionBody"":{""NewTransh"":{""Sum"":5,""temp_id"":""f0eb715c-e76f-4781-a222-281ea6669463"",""Product_Id"":89}}, ""RequestionCode"":""NEW_TRANSH""}
+ЗАЯВКИ. Генерация Temporary Code               PSOSendTemporaryPassword					{""temp_id"":""""}
+ЗАЯВКИ. Валидация Temporary Code               PSOValidateTemporaryPassword           	{""temp_id"":"""", ""TemporaryPassword"":"""", ""RequestionID"":0}
+ЗАЯВКИ. Создание заявки(досрочное)             PSONewRequestion                         {""RequestionBody"":{""NewEarlyRepay"":{""temp_id"":"""",""Product_Id"":0,""Part_Flag"":true,""Close_Cred_Flag"":true,""Sum_of_Pay"":0}}, ""RequestionCode"":""EARLY_REPAY""}
+Расчитать сумму                                PSOGetFullCredSum                        {""temp_id"":"""",""Product_ID"":0}
+ЗАЯВКИ. Установить активными реквизиты         PSONewRequestion                         {""RequestionBody"":{""ActiveRequisits"":{""ID"":0,""Is_Card"":true,""temp_id"":"""",""Product_Id"":0,""Product_Code"":""CRED_ON_CARD""}}, ""RequestionCode"":""SET_ACTIVE_REQISITES""}
+Спросим номер телефона по temp_id              PSOGiveMeAPhone                          {""temp_id"":""""}";
+
+POST http://pso_test.2tbank.ru/PSO.svc/PSOGiveMeAPhone/ HTTP/1.1
