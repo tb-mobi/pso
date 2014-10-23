@@ -1,8 +1,9 @@
-<?php
+	<?php
 class TymParser{
 	protected $products;
 	protected $_object=null;
 	protected $_string="";
+	protected $_http_status=200;
 	public function parse($str){
 		$obj=json_decode($str);
 		try{
@@ -25,26 +26,12 @@ class TymParser{
 		}
 		catch(Exception $e){
 			$this->_string=$str;
-			$this->_object=null;
+			$this->_object=new TymException($e->getCode(),$e->getMessage(),"Обратитесь в службу поддержки.");
 		}
-	}
-	public function __toString(){
-		header('Content-Type: application/json');
-		return is_null($this->_object)?$this->_string:$this->_object->json();
 	}
 	public function service(){
 		$req=parse_url($_SERVER["REQUEST_URI"]);
 		$INTERNAL_REQUEST_PARAMS=array("url","session","request");
-		$USE_PROXY=true;
-		$PSO_SERIVCE_URL="http://pso_test.2tbank.ru/PSO.svc/json/";
-		$CONTEXT_OPTIONS = array('http' => array(
-			'header'  => "Content-type: application/json"
-			,'method'  => 'POST'
-		));
-		if($USE_PROXY){
-			$CONTEXT_OPTIONS['http']['proxy']='tcp://10.0.1.46:8080';
-			$CONTEXT_OPTIONS['http']['request_fulluri']=true;
-		}
 		if(preg_match_all("/(.+?)\//im",$req["path"],$m)){
 			$request=$this->knownPSORequest[$m[1][count($m[1])-1]];
 			$data = array();
@@ -57,20 +44,68 @@ class TymParser{
 			if(isset($request["pso"]["default"])){foreach($request["pso"]["default"] as $p=>$v){
 				$data[$p]=$v;
 			}}
-			$CONTEXT_OPTIONS['http']['content']=json_encode($data);
+			$data=json_encode($data);
 			$url=PSO_SERIVCE_URL.$request["pso"]["request"]."/";
-			$context=stream_context_create($CONTEXT_OPTIONS);
 			try{
-				Formatter::log("PSO Request [".$url."]: ".$CONTEXT_OPTIONS['http']['content']);
-				$_result=file_get_contents($url,false,$context);
-			}
+				Formatter::log("PSO Request [".$url."]: ".$data);
+				$_result=$this->sendPost($url,$data);
+				Formatter::log("PSO response: ".$_result);
+				$this->parse($_result);
+			}	
 			catch(Exception $e){
-				$_result='{"exception":{"code":1,"message":"Error"}}';
+				$this->_object=new TymException($e->getCode(),$e->getMessage(),"Обратитесь в службу поддержки.");
 			}
-			Formatter::log("PSO response: ".$_result);
-			$this->parse($_result);
-
 		}
+	}
+	public function __toString(){
+		if(get_class($this->_object)==="TymException"){
+			header("HTTP/1.0 ".$this->_http_status." ".$this->_object->message);
+		}
+		header('Content-Type: application/json');
+		return is_null($this->_object)?$this->_string:$this->_object->json();
+	}
+	protected function sendPost($url,$data){
+		return $this->sendByCurl($url,$data);
+		//return $this->sendByFileGet($url,$data);
+	}
+	protected function sendByCurl($url,$data){
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$url);
+		curl_setopt($ch,CURLOPT_POST, 1);                //0 for a get request
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT ,3);
+		curl_setopt($ch,CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch,CURLOPT_FAILONERROR, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+			'Content-Type: application/json',                                                                                
+			'Content-Length: ' . strlen($data))                                                                       
+		); 
+		if(USE_PROXY){
+			curl_setopt($ch,CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+			curl_setopt($ch,CURLOPT_PROXY, "10.0.1.46");
+			curl_setopt($ch,CURLOPT_PROXYPORT, 8080);
+		}
+		$response = curl_exec($ch);
+		$this->_http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if ($this->_http_status!=200){
+			throw new Exception(curl_error($ch),curl_errno($ch));
+		}
+		curl_close ($ch);
+		return $response;
+	}
+	protected function sendByFileGet($url,$data){
+		$CONTEXT_OPTIONS = array('http' => array(
+			'header'  => "Content-type: application/json"
+			,'method'  => 'POST'
+		));
+		if(USE_PROXY){
+			$CONTEXT_OPTIONS['http']['proxy']='tcp://10.0.1.46:8080';
+			$CONTEXT_OPTIONS['http']['request_fulluri']=true;
+		}
+		$CONTEXT_OPTIONS['http']['content']=$data;
+		$context=stream_context_create($CONTEXT_OPTIONS);
+		return file_get_contents($url,false,$context);
 	}
 	protected $knownPSOResponse=array(
 		"PSOGetProductsListResult"=>array("class"=>"ProductList","property"=>array("save2local"=>"products"))
