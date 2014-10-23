@@ -29,6 +29,7 @@ class TymParser{
 		}
 	}
 	public function __toString(){
+		header('Content-Type: application/json');
 		return is_null($this->_object)?$this->_string:$this->_object->json();
 	}
 	public function service(){
